@@ -1,163 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Bingo Mini App</title>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #111827;
-            color: white;
-            text-align: center;
-        }
-
-        .header {
-            padding: 20px;
-            font-size: 26px;
-            font-weight: bold;
-        }
-
-        .balance {
-            margin: 10px auto 20px;
-            padding: 15px;
-            width: 85%;
-            background: #1f2937;
-            border-radius: 15px;
-            font-size: 20px;
-        }
-
-        .card {
-            width: 90%;
-            max-width: 400px;
-            margin: auto;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 15px;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-        }
-
-        .cell {
-            margin: 3px;
-            padding: 14px 5px;
-            background: #e5e7eb;
-            color: #111827;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .title {
-            color: #111827;
-            font-size: 20px;
-            padding: 8px;
-        }
-
-        button {
-            margin: 20px 5px;
-            padding: 14px 25px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .play {
-            background: #22c55e;
-            color: white;
-        }
-
-        .cash {
-            background: #f59e0b;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tap Tap Game</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(160deg,#101827,#1c2740);color:#fff;min-height:100vh}
+    .app{max-width:520px;margin:auto;padding:18px 16px 90px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .brand{font-size:24px;font-weight:800}.user{font-size:13px;opacity:.75}
+    .balance{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:20px;text-align:center}
+    .balance small{opacity:.7}.coins{font-size:42px;font-weight:900;margin:5px 0}
+    .tap-wrap{text-align:center;padding:28px 0}
+    .tap{width:210px;height:210px;border-radius:50%;border:0;background:linear-gradient(145deg,#7c3aed,#a855f7);box-shadow:0 18px 45px rgba(124,58,237,.4),inset 0 -8px 0 rgba(0,0,0,.15);color:#fff;font-size:58px;font-weight:900;cursor:pointer;touch-action:manipulation}
+    .tap:active{transform:scale(.94)}
+    .hint{text-align:center;opacity:.65;margin-top:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:17px;padding:16px;text-align:left}
+    .card b{display:block;margin-top:7px}.card span{font-size:25px}
+    .ref{margin-top:14px}
+    button.secondary{width:100%;border:0;border-radius:14px;padding:14px;background:#fff;color:#151a28;font-weight:800;margin-top:10px}
+    .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,18,31,.94);backdrop-filter:blur(12px);display:flex;justify-content:center;gap:30px;padding:12px}
+    .nav button{background:none;border:0;color:#fff;opacity:.8;font-size:13px}
+    #toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:12px;display:none;font-weight:700}
+  </style>
 </head>
-
 <body>
+<div class="app">
+  <div class="top">
+    <div class="brand">👆 Tap Tap</div>
+    <div class="user" id="user">Player</div>
+  </div>
 
-    <div class="header">
-        🎱 BINGO
-    </div>
+  <div class="balance">
+    <small>Your Coins</small>
+    <div class="coins" id="coins">0</div>
+    <small>🪙 coins</small>
+  </div>
 
-    <div class="balance">
-        💰 Balance: <b id="balance">0.00 ETB</b>
-    </div>
+  <div class="tap-wrap">
+    <button class="tap" id="tap">TAP</button>
+    <div class="hint">Tap to earn 🪙</div>
+  </div>
 
-    <div class="card">
-        <div class="title">B I N G O</div>
+  <div class="grid">
+    <div class="card"><span>💰</span><b>Balance</b><small id="balanceText">0 coins</small></div>
+    <div class="card"><span>👥</span><b>Referral</b><small>Invite friends</small></div>
+    <div class="card"><span>💸</span><b>Withdraw</b><small>Coming soon</small></div>
+    <div class="card"><span>🏆</span><b>Leaderboard</b><small>Top players</small></div>
+  </div>
 
-        <div class="row">
-            <div class="cell">1</div>
-            <div class="cell">16</div>
-            <div class="cell">31</div>
-            <div class="cell">46</div>
-            <div class="cell">61</div>
-        </div>
+  <div class="card ref">
+    <span>🎁</span>
+    <b>Invite & Earn</b>
+    <small>Share your referral link with friends.</small>
+    <button class="secondary" id="share">📤 Invite Friends</button>
+  </div>
+</div>
 
-        <div class="row">
-            <div class="cell">4</div>
-            <div class="cell">19</div>
-            <div class="cell">35</div>
-            <div class="cell">49</div>
-            <div class="cell">67</div>
-        </div>
+<div id="toast"></div>
+<div class="nav">
+  <button>🏠<br>Home</button>
+  <button>👥<br>Friends</button>
+  <button>🏆<br>Rank</button>
+  <button>👤<br>Profile</button>
+</div>
 
-        <div class="row">
-            <div class="cell">8</div>
-            <div class="cell">23</div>
-            <div class="cell">FREE</div>
-            <div class="cell">52</div>
-            <div class="cell">72</div>
-        </div>
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
 
-        <div class="row">
-            <div class="cell">11</div>
-            <div class="cell">27</div>
-            <div class="cell">42</div>
-            <div class="cell">56</div>
-            <div class="cell">75</div>
-        </div>
+const KEY = "tap_tap_coins";
+let coins = Number(localStorage.getItem(KEY) || 0);
+const coinsEl = document.getElementById("coins");
+const balanceEl = document.getElementById("balanceText");
+const userEl = document.getElementById("user");
 
-        <div class="row">
-            <div class="cell">14</div>
-            <div class="cell">30</div>
-            <div class="cell">44</div>
-            <div class="cell">59</div>
-            <div class="cell">70</div>
-        </div>
-    </div>
+if (tg?.initDataUnsafe?.user) {
+  const u = tg.initDataUnsafe.user;
+  userEl.textContent = u.first_name || "Player";
+}
 
-    <button class="play" onclick="playBingo()">
-        🎮 PLAY BINGO
-    </button>
+function render(){
+  coinsEl.textContent = coins.toLocaleString();
+  balanceEl.textContent = coins.toLocaleString() + " coins";
+  localStorage.setItem(KEY, coins);
+}
 
-    <button class="cash" onclick="cashout()">
-        💸 CASHOUT
-    </button>
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.style.display="block";
+  setTimeout(()=>t.style.display="none",1200);
+}
 
-    <script>
-        const tg = window.Telegram.WebApp;
+document.getElementById("tap").addEventListener("click",()=>{
+  coins += 1;
+  render();
+  if (navigator.vibrate) navigator.vibrate(20);
+});
 
-        tg.ready();
-        tg.expand();
+document.getElementById("share").addEventListener("click",()=>{
+  const bot = "TapTapGame_24Bot";
+  const uid = tg?.initDataUnsafe?.user?.id || "";
+  const link = "https://t.me/" + bot + "?start=ref_" + uid;
+  if (tg?.openTelegramLink) tg.openTelegramLink(
+    "https://t.me/share/url?url=" + encodeURIComponent(link) +
+    "&text=" + encodeURIComponent("Join Tap Tap Game 👆🪙")
+  );
+  else navigator.clipboard?.writeText(link).then(()=>toast("Referral link copied"));
+});
 
-        function playBingo() {
-            alert("🎱 Bingo game starting...");
-        }
-
-        function cashout() {
-            alert("💸 Cashout section");
-        }
-    </script>
-
+render();
+</script>
 </body>
 </html>
